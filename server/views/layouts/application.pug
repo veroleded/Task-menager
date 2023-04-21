@@ -3,12 +3,12 @@ include ../mixins/forms.pug
 doctype html
 html(lang="en")
   head
-    title Hexlet Fastify Boilerplate
+    title Task Menager
     script(src=assetPath('main.js'))
     link(href=assetPath('main.css') rel="stylesheet")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
   body.d-flex.flex-column.min-vh-100
-    nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.mb-3
       .container-fluid
         a.navbar-brand(href=route('root'))= t('appName')
         button.navbar-toggler(data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent")
@@ -39,4 +39,4 @@ html(lang="en")
 
     footer
       .container.my-5.pt-4.border-top
-        a(target="_blank" href="https://ru.hexlet.io") Hexlet
+        //- a(target="_blank" href="https://github.com/veroleded/fullstack-javascript-project-6") created by Veroled
