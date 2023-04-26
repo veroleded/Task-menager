@@ -1,15 +1,27 @@
 extends ../layouts/application.pug
 
 block content
+  h1.mb-3= t('views.users.label')
   table.table.table-striped
     thead
       tr
         th= t('views.users.id')
+        th= t('views.users.lastName')
+        th= t('views.users.firstName')
         th= t('views.users.email')
         th= t('views.users.createdAt')
+        th.ml-3= t('views.users.settings')
     tbody
       each user in users
         tr
           td= user.id
+          td=user.firstName
+          td=user.lastName
           td= user.email
           td= formatDate(user.createdAt)
+          td
+            .d-flex.flex-wrap
+              //- a.btn.btn-dark.m-1(href=route('userEdit', { id: user.id }))= t('views.users.edit') TODO: why don't work route?
+              a.btn.btn-dark.m-1(href=`users/${user.id}/edit`)= t('views.users.edit')
+              //- +buttonTo(route('userDelete', { id: user.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.users.delete'))
+              +buttonTo(`/users/${user.id}`, 'DELETE')(class='btn btn-danger m-1', value=t('views.users.delete'))
