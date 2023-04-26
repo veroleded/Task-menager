@@ -8,4 +8,4 @@ export const up = (knex) => (
   })
 );
 
-export const down = (knex) =>  knex.schema.dropTable('tasks');
+export const down = (knex) =>  knex.schema.dropTable('statuses');

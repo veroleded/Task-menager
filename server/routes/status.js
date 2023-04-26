@@ -49,5 +49,24 @@ export default (app) => {
       const status = await app.objection.models.status.query().findById(id);
       reply.render('status/edit', { status });
       return reply;
+    })
+    .patch('/statuses/:id', { name: 'patchUpdateStatus' }, async (req, reply) => {
+      try {
+        const status = await app.objection.models.status.query().findById(req.params.id);
+        await status.$query().patch(req.body.data);
+        req.flash('success', i18next.t('flash.status.edit.success'));
+        reply.redirect(app.reverse('statuses'));
+        return reply;
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          req.flash('error', i18next.t('flash.status.edit.error'));
+          reply.render('status/edit', {
+            status: { ...req.body.data, id: req.params.id },
+            errors: error.data,
+          });
+          return reply.code(422);
+        }
+        throw error;
+      }
     });
 };

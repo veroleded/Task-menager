@@ -20,7 +20,6 @@ export default (app) => {
       user.$set(req.body.data);
 
       try {
-        // console.log(req.body.data);
         const validUser = await app.objection.models.user.fromJson(req.body.data);
         await app.objection.models.user.query().insert(validUser);
         req.flash('info', i18next.t('flash.users.create.success'));
@@ -40,7 +39,6 @@ export default (app) => {
       if (req.user?.id !== parseInt(req.params.id, 10)) {
         req.flash('error', i18next.t('flash.users.authError'));
         reply.redirect('/users');
-        reply.code(401);
       } else {
         const user = await app.objection.models.user.query().findById(id);
         // const user = new app.objection.models.user();

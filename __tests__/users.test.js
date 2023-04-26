@@ -78,15 +78,18 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
-  // it('edit', async () => {
-  //   const removingUser = testData.users.existing;
-  //   const response = await app.inject({
-  //     method: 'get',
-  //     url: app.reverse('userEdit', { id: `${removingUser.id}` }),
-  //   });
-  //   console.log(response);
-  //   expect(response.statusCode).toBe(401);
-  // });
+  it('edit', async () => {
+    const editingUser = testData.users.existing;
+    const user = await app.objection.models.user.query().findById.fromJson(2);
+    // console.log(user);
+    const response = await app.inject({
+      method: 'get',
+      url: app.reverse('userEdit', { id: `${editingUser.id}` }),
+      payload: user,
+    });
+    console.log(response);
+    expect(response.statusCode).toBe(302);
+  });
 
   afterEach(async () => {
     // Пока Segmentation fault: 11
