@@ -82,7 +82,7 @@ export default {
           more: 'Узнать Больше',
         },
       },
-      tasks: {
+      status: {
         id: 'ID',
         name: 'Наименование',
         createdAt: 'Дата создания',
@@ -92,6 +92,22 @@ export default {
         new: {
           create: 'Создать',
           newStatus: 'Новый статус',
+        },
+      },
+      tasks: {
+        label: 'Задачи',
+        id: 'ID',
+        name: 'Название',
+        description: 'Описание',
+        status: 'Статус',
+        createdAt: 'Дата создания',
+        creator: 'Автор',
+        executor: 'Исполнитель',
+        create: 'Создать задачу',
+        delete: 'Удалить',
+        new: {
+          create: 'Создать',
+          label: 'Новая задача',
         },
       },
     },

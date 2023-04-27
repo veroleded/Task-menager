@@ -1,6 +1,8 @@
 // @ts-check
 
 const objectionUnique = require('objection-unique');
+// const { Model } = require('objection');
+// const Task = require('./Task.cjs');
 const BaseModel = require('./BaseModel.cjs');
 const encrypt = require('../lib/secure.cjs');
 
@@ -25,9 +27,18 @@ module.exports = class User extends unique(BaseModel) {
     };
   }
 
-  fullName() {
-    return `${this.firstName} ${this.lastName}`;
-  }
+  // static get relationMappings() {
+  //   return {
+  //     tasks: {
+  //       relation: Model.HasManyRelation,
+  //       modelClass: Task,
+  //       join: {
+  //         from: 'users.id',
+  //         to: 'tasks.creatorId',
+  //       },
+  //     },
+  //   };
+  // }
 
   set password(value) {
     this.passwordDigest = encrypt(value);

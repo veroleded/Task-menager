@@ -96,6 +96,22 @@ export default {
           newStatus: 'New status',
         },
       },
+      tasks: {
+        label: 'Tasks',
+        id: 'ID',
+        name: 'Name',
+        description: 'Description',
+        status: 'Status',
+        createdAt: 'Creation date',
+        creator: 'Creator',
+        executor: 'Executor',
+        create: 'Create tasks',
+        delete: 'Delete',
+        new: {
+          create: 'Create',
+          label: 'New Tasks',
+        },
+      },
     },
   },
 };
