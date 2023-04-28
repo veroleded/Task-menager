@@ -3,8 +3,10 @@
 const objectionUnique = require('objection-unique');
 // const { Model } = require('objection');
 // const Task = require('./Task.cjs');
+const { Model } = require('objection');
 const BaseModel = require('./BaseModel.cjs');
 const encrypt = require('../lib/secure.cjs');
+const Task = require('./Task.cjs');
 
 const unique = objectionUnique({ fields: ['email'] });
 
@@ -27,18 +29,18 @@ module.exports = class User extends unique(BaseModel) {
     };
   }
 
-  // static get relationMappings() {
-  //   return {
-  //     tasks: {
-  //       relation: Model.HasManyRelation,
-  //       modelClass: Task,
-  //       join: {
-  //         from: 'users.id',
-  //         to: 'tasks.creatorId',
-  //       },
-  //     },
-  //   };
-  // }
+  static get relationMappings() {
+    return {
+      tasks: {
+        relation: Model.HasManyRelation,
+        modelClass: Task,
+        join: {
+          from: 'users.id',
+          to: 'tasks.creatorId',
+        },
+      },
+    };
+  }
 
   set password(value) {
     this.passwordDigest = encrypt(value);

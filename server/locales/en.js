@@ -41,8 +41,36 @@ export default {
           success: 'Status edited',
           error: 'Failed to edit',
         },
-        authError: 'Access denied! Please login',
       },
+      labels: {
+        create: {
+          success: 'Label successfully created',
+          error: 'Failed to create label',
+        },
+        delete: {
+          success: 'Label deleted',
+          error: 'Failed to delete',
+        },
+        edit: {
+          success: 'Label edited',
+          error: 'Failed to edit',
+        },
+      },
+      tasks: {
+        create: {
+          success: 'Task successfully created',
+          error: 'Failed to create task',
+        },
+        delete: {
+          success: 'Task deleted',
+          error: 'Failed to delete',
+        },
+        edit: {
+          success: 'Task edited',
+          error: 'Failed to edit',
+        },
+      },
+      authError: 'Access denied! Please login',
     },
     layouts: {
       application: {
@@ -52,6 +80,7 @@ export default {
         signOut: 'Logout',
         tasks: 'Tasks',
         statuses: 'Statuses',
+        labels: 'Labels',
       },
     },
     views: {
@@ -96,6 +125,18 @@ export default {
           newStatus: 'New status',
         },
       },
+      labels: {
+        label: 'Labels',
+        id: 'ID',
+        name: 'Name',
+        edit: 'Edit',
+        create: 'Create label',
+        delete: 'Delete',
+        new: {
+          create: 'Create',
+          label: 'New label',
+        },
+      },
       tasks: {
         label: 'Tasks',
         id: 'ID',
@@ -107,6 +148,7 @@ export default {
         executor: 'Executor',
         create: 'Create tasks',
         delete: 'Delete',
+        edit: 'Edit',
         new: {
           create: 'Create',
           label: 'New Tasks',

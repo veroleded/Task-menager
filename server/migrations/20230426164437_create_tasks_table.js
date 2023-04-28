@@ -4,9 +4,9 @@ export const up = (knex) => (
     table.increments('id').primary();
     table.string('name');
     table.string('description');
-    table.string('statusId').references('id').inTable('statuses');
-    table.string('creatorId').references('id').inTable('users');
-    table.string('executorId').references('id').inTable('users');
+    table.integer('statusId').references('id').inTable('statuses');
+    table.integer('creatorId').references('id').inTable('users');
+    table.integer('executorId').references('id').inTable('users');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   })

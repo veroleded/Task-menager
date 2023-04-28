@@ -1,0 +1,22 @@
+extends ../layouts/application.pug
+
+block content
+  h1.mb-3= t('views.labels.label')
+  a.btn.btn-dark(href=route('newLabel'))= t('views.labels.create')
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.labels.id')
+        th= t('views.labels.name')
+        th
+    tbody
+      each label in labels
+        tr
+          td= label.id
+          td= label.name
+          td
+            .d-flex.flex-wrap
+              //- a.btn.btn-dark.m-1(href=route('labelEdit', { id: label.id }))= t('views.label.edit') TODO: why don't work route?
+              a.btn.btn-dark.m-1(href=`labels/${label.id}/edit`)= t('views.labels.edit')
+              //- +buttonTo(route('labelDelete', { id: label.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.label.delete'))
+              +buttonTo(`/labels/${label.id}`, 'DELETE')(class='btn btn-danger m-1', value=t('views.labels.delete'))
