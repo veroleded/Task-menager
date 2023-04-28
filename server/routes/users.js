@@ -36,7 +36,7 @@ export default (app) => {
     })
     .get(
       '/users/:id/edit',
-      { name: 'userEdit', preHandler: app.checkIfUserCanEditProfile },
+      { name: 'userEdit', preHandler: [app.authenticate, app.checkIfUserCanEditProfile] },
       async (req, reply) => {
         const { id } = req.params;
         const user = await app.objection.models.user.query().findById(id);
@@ -48,7 +48,7 @@ export default (app) => {
     )
     .delete(
       '/users/:id',
-      { name: 'userDelete', preHandler: app.checkIfUserCanEditProfile },
+      { name: 'userDelete', preHandler: [app.authenticate, app.checkIfUserCanEditProfile] },
       async (req, reply) => {
         const { id } = req.params;
         try {
@@ -63,7 +63,7 @@ export default (app) => {
     )
     .patch(
       '/users/:id',
-      { name: 'patchUpdateUser' },
+      { name: 'patchUpdateUser', preHandler: [app.authenticate, app.checkIfUserCanEditProfile] },
       async (req, reply) => {
         const { id } = req.params;
         try {
@@ -75,8 +75,10 @@ export default (app) => {
         } catch (error) {
           if (error instanceof ValidationError) {
             req.flash('error', i18next.t('flash.users.edit.error'));
-            const user = (new app.objection.models.user())
-              .$set({ ...req.body.data, id: req.params.id });
+            const user = new app.objection.models.user().$set({
+              ...req.body.data,
+              id: req.params.id,
+            });
             reply.render('users/edit', {
               user,
               errors: error.data,
