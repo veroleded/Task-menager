@@ -33,4 +33,11 @@ module.exports = class Status extends unique(BaseModel) {
       },
     };
   }
+
+  static async beforeDelete({ asFindQuery }) {
+    const tasks = await Task.query().where('statusId', asFindQuery().id);
+    if (tasks.length > 0) {
+      throw new Error('Cannot delete status because they have tasks');
+    }
+  }
 };

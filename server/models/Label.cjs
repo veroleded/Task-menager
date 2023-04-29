@@ -1,7 +1,7 @@
 const { Model } = require('objection');
 const objectionUnique = require('objection-unique');
-const BaseModel = require('./BaseModel.cjs');
 const Task = require('./Task.cjs');
+const BaseModel = require('./BaseModel.cjs');
 
 const unique = objectionUnique({ fields: ['name'] });
 
@@ -37,5 +37,15 @@ module.exports = class Label extends unique(BaseModel) {
         },
       },
     };
+  }
+
+  static async beforeDelete() {
+    const hasTask = await Task.query()
+      .join('taskLabels', 'task.id', '=', 'taskLabels.task_id')
+      .where('taskLabels.label_id', this.id)
+      .first();
+    if (hasTask) {
+      throw new Error('Cannot delete label with task');
+    }
   }
 };

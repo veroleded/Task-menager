@@ -17,15 +17,16 @@ block content
       each task in tasks
         tr
           td= task.id
-          td= task.name
-            //- a.(href=route())= task.name
+          td
+            //- a(href=route('taskInfo', { id: task.id}))= task.name
+            a(href=`/tasks/${task.id}`)= task.name
           td= task.status
           td= task.creator
           td= task.executor
-          td= formatDate(status.createdAt)
+          td= formatDate(task.createdAt)
           td
             .d-flex.flex-wrap
               //- a.btn.btn-dark.m-1(href=route('tasksEdit', { id: tasks.id }))= t('views.tasks.edit') TODO: why don't work route?
-              a.btn.btn-dark.m-1(href=`tasks/${tasks.id}/edit`)= t('views.tasks.edit')
-              //- +buttonTo(route('tasksDelete', { id: status.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))
-              +buttonTo(`/tasks/${tasks.id}`, 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))
+              a.btn.btn-dark.m-1(href=`tasks/${task.id}/edit`)= t('views.tasks.edit')
+              //- +buttonTo(route('tasksDelete', { id: task.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))
+              +buttonTo(`/tasks/${task.id}`, 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))

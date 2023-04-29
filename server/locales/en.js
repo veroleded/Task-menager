@@ -153,6 +153,11 @@ export default {
           create: 'Create',
           label: 'New Tasks',
         },
+        info: {
+          creator: 'Creator',
+          executor: 'Executor',
+          createdAt: 'Created at',
+        },
       },
     },
   },

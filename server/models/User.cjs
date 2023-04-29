@@ -1,8 +1,6 @@
 // @ts-check
 
 const objectionUnique = require('objection-unique');
-// const { Model } = require('objection');
-// const Task = require('./Task.cjs');
 const { Model } = require('objection');
 const BaseModel = require('./BaseModel.cjs');
 const encrypt = require('../lib/secure.cjs');
@@ -40,6 +38,17 @@ module.exports = class User extends unique(BaseModel) {
         },
       },
     };
+  }
+
+  static async beforeDelete({ asFindQuery }) {
+    const users = await Task.query().where('userId', asFindQuery().id);
+    if (users.length > 0) {
+      throw new Error('Cannot delete user because they have tasks');
+    }
+  }
+
+  fullName() {
+    return `${this.firstName} ${this.lastName}`;
   }
 
   set password(value) {

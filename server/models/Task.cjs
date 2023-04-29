@@ -1,8 +1,7 @@
 const { Model } = require('objection');
+const path = require('path');
 const BaseModel = require('./BaseModel.cjs');
-const User = require('./User.cjs');
 const Status = require('./Status.cjs');
-const Label = require('./Label.cjs');
 
 module.exports = class Task extends BaseModel {
   static get tableName() {
@@ -29,7 +28,7 @@ module.exports = class Task extends BaseModel {
     return {
       creator: {
         relation: Model.BelongsToOneRelation,
-        modelClass: User,
+        modelClass: path.join(__dirname, 'User.cjs'),
         join: {
           from: 'tasks.creatorId',
           to: 'users.id',
@@ -37,7 +36,7 @@ module.exports = class Task extends BaseModel {
       },
       executor: {
         relation: Model.BelongsToOneRelation,
-        modelClass: User,
+        modelClass: path.join(__dirname, 'User.cjs'),
         join: {
           from: 'tasks.executorId',
           to: 'users.id',
@@ -53,7 +52,7 @@ module.exports = class Task extends BaseModel {
       },
       labels: {
         relation: Model.ManyToManyRelation,
-        modelClass: Label,
+        modelClass: path.join(__dirname, 'Label.cjs'),
         join: {
           from: 'tasks.id',
           through: {
@@ -65,22 +64,4 @@ module.exports = class Task extends BaseModel {
       },
     };
   }
-
-  // static modifiers = {
-  //   filterCreator(query, id) {
-  //     query.where('creatorId', id);
-  //   },
-
-  //   filterExecutor(query, id) {
-  //     query.where('executorId', id);
-  //   },
-
-  //   filterStatus(query, id) {
-  //     query.where('statusId', id);
-  //   },
-
-  //   filterLabel(query, id) {
-  //     query.where('labels.id', id);
-  //   },
-  // };
 };

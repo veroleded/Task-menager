@@ -44,6 +44,7 @@ export default (app) => {
           reply.redirect(app.reverse('labels'));
         } catch (err) {
           req.flash('error', i18next.t('flash.labels.delete.error'));
+          reply.redirect(app.reverse('labels'));
           console.error(err);
         }
       },
