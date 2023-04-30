@@ -149,6 +149,7 @@ export default {
         create: 'Create tasks',
         delete: 'Delete',
         edit: 'Edit',
+        editTask: 'Edit task',
         new: {
           create: 'Create',
           label: 'New Tasks',

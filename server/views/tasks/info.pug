@@ -22,6 +22,6 @@ block content
           span= formatDate(task.createdAt)
         .d-flex.flex-wrap
           //- a.btn.btn-dark.m-1(href=route('tasksEdit', { id: tasks.id }))= t('views.tasks.edit') TODO: why don't work route?
-          a.btn.btn-dark.m-1(href=`tasks/${task.id}/edit`)= t('views.tasks.edit')
-          //- +buttonTo(route('tasksDelete', { id: task.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))
+          a.btn.btn-dark.m-1(href=`/tasks/${task.id}/edit`)= t('views.tasks.edit')
+          //- +buttonTo(route('taskDelete', { id: task.id} ), 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))
           +buttonTo(`/tasks/${task.id}`, 'DELETE')(class='btn btn-danger m-1', value=t('views.tasks.delete'))

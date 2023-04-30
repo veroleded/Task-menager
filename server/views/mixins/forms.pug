@@ -34,12 +34,11 @@ mixin textarea(entity, propertyName, errors = {})
       class=classLine
       data-dl-input-translation='true'
       rows='3'
-      value=_.get(entity, propertyName, '')
-    )&attributes(attributes)
+    )&attributes(attributes)=_.get(entity, propertyName, '')
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin select(entity, propertyName, errors = {}, items, multiple = false )
+mixin select(entity, propertyName, errors = {}, items, multiple = false, selectedIds = [] )
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - selectId = getInputId(propertyName)
@@ -53,7 +52,10 @@ mixin select(entity, propertyName, errors = {}, items, multiple = false )
       if (!multiple)
         option(value="") 
       each item in items
-        option(value=item.id)= (item.name || item.fullName()) 
+        option(
+          value=item.id
+          selected= (selectedIds.includes(item.id))
+        )= (item.name || item.fullName()) 
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 

@@ -51,7 +51,7 @@ export default (app) => {
         const { id } = req.params;
         const task = await app.objection.models.task
           .query()
-          .findById(Number(id))
+          .findById(id)
           .joinRelated('[creator, executor, status]')
           .select(
             'tasks.*',
@@ -127,5 +127,112 @@ export default (app) => {
         }
         throw error;
       }
-    });
+    })
+    .get(
+      '/tasks/:id/edit',
+      { name: 'taksEdit', preValidation: app.authenticate },
+      async (req, reply) => {
+        const { id } = req.params;
+        const task = await app.objection.models.task.query().findById(id);
+        const statuses = await app.objection.models.status.query();
+        const users = await app.objection.models.user.query();
+        const labels = await app.objection.models.label.query();
+        const selectedLabels = await app.objection.models.label.query()
+          .joinRelated('tasks')
+          .where('tasks.id', '=', task.id);
+        task.labels = selectedLabels.map((selectedLabel) => selectedLabel.id);
+
+        reply.render('/tasks/edit', {
+          task,
+          users,
+          statuses,
+          labels,
+          errors: {},
+        });
+
+        return reply;
+      },
+    )
+    .patch(
+      '/tasks/:id',
+      { name: 'patchTaskEdit', preValidation: app.authenticate },
+      async (req, reply) => {
+        const { id } = req.params;
+        const {
+          name,
+          description,
+          statusId,
+          executorId,
+          labels,
+        } = req.body.data;
+
+        const newTask = await app.objection.models.task.query().findById(id);
+        console.log(id);
+        const creatorId = req.user.id;
+
+        try {
+          const validTask = await app.objection.models.task.fromJson({
+            name,
+            description,
+            statusId: parseInt(statusId, 10),
+            executorId: parseInt(executorId, 10),
+            creatorId,
+          });
+          newTask.$query().patch(validTask);
+
+          if (labels) {
+            const labelIds = [labels].flat().map((labelId) => parseInt(labelId, 10));
+            await app.objection.models.task.relatedQuery('labels').for(id).unrelate();
+            labelIds.forEach(async (labelId) => {
+              await app.objection.models.task.relatedQuery('labels')
+                .for(newTask)
+                .relate(labelId);
+            });
+          }
+
+          req.flash('info', i18next.t('flash.tasks.create.success'));
+          reply.redirect(app.reverse('tasks'));
+
+          return reply;
+        } catch (error) {
+          console.log(error);
+          if (error instanceof ValidationError) {
+            req.flash('error', i18next.t('flash.tasks.create.error'));
+            const task = new app.objection.models.task().$set({ id, ...req.body.data });
+            const [users, statuses, labelList] = await Promise.all([
+              app.objection.models.user.query(),
+              app.objection.models.status.query(),
+              app.objection.models.label.query(),
+            ]);
+            reply.render('/tasks/edit', {
+              task,
+              users,
+              statuses,
+              labels: labelList,
+              errors: error.data,
+            });
+            return reply.code(422);
+          }
+          throw error;
+        }
+      },
+    )
+    .delete(
+      '/tasks/:id',
+      { name: 'taskDelete', preValidation: [app.authenticate, app.checkIfUserCreatedTask] },
+      async (req, reply) => {
+        const { id } = req.params;
+        try {
+          const task = await app.objection.models.task;
+          await task.relatedQuery('labels').for(id).unrelate();
+          await task.query().delete();
+          req.flash('info', i18next.t('flash.tasks.delete.success'));
+          reply.redirect(app.reverse('tasks'));
+        } catch (err) {
+          req.flash('error', i18next.t('flash.tasks.delete.error'));
+          reply.redirect(app.reverse('tasks'));
+          console.error(err);
+        }
+      },
+    );
 };

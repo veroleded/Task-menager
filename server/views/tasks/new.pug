@@ -6,8 +6,8 @@ block header
 block content
   +formFor()(action=route('tasks') method='post')
     +input(tasks, 'name', errors)(type="text")
-    +textarea(tasks, 'description', errors) 
+    +textarea(task, 'description', errors) 
     +select(tasks, 'statusId', errors, statuses)
     +select(tasks, 'executorId', errors, users)
     +select(tasks, 'labels', errors, labels, true)(multiple)
-    +submit(status)(value=t('views.status.new.create'))
+    +submit(task)(value=t('views.tasks.new.create'))
