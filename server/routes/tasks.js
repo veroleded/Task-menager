@@ -1,28 +1,70 @@
 import i18next from 'i18next';
-import { ValidationError } from 'objection';
+import { ValidationError, raw } from 'objection';
 
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
-      // const tasks = await app.objection.models.task.query();
-      const notFullTasks = await app.objection.models.task
+      const {
+        query,
+        user: { id },
+      } = req;
+      console.log(query);
+      const tasksQuery = app.objection.models.task
         .query()
-        .joinRelated('[creator, executor, status]')
-        .select(
-          'tasks.*',
-          'creator.firstName as creator_firstName',
-          'creator.lastName as creator_lastName',
-          'executor.firstName as executor_firstName',
-          'executor.lastName as executor_lastName',
-          'status.name as status',
-        );
-      const tasks = notFullTasks.map((task) => {
-        const creator = `${task.creatorFirstName} ${task.creatorLastName}`;
-        const executor = `${task.executorFirstName} ${task.executorLastName}`;
-        return { ...task, creator, executor };
-      });
+        .withGraphJoined('[creator, executor, status, labels]');
 
-      reply.render('tasks/index', { tasks });
+      if (query.executor) {
+        tasksQuery.modify('filterExecutor', parseInt(query.executorId, 10));
+      }
+
+      if (query.status) {
+        tasksQuery.modify('filterStatus', parseInt(query.statusId, 10));
+      }
+
+      if (query.label) {
+        tasksQuery.modify('filterLabel', parseInt(query.label, 10));
+      }
+
+      if (query.isCreatorUser) {
+        tasksQuery.modify('filterCreator', id);
+      }
+      const [tasks, executors, statuses, labels] = await Promise.all([
+        tasksQuery,
+        app.objection.models.user.query().select('*', raw(
+          "\"first_name\" || ' ' || \"last_name\" as name",
+        )),
+        app.objection.models.status.query(),
+        app.objection.models.label.query(),
+      ]);
+      // const [executors, statuses, labels] = await Promise.all([
+        // app.objection.models.user.query().select('*', raw(
+        //   "\"first_name\" || ' ' || \"last_name\" as name",
+        // )),
+      //   app.objection.models.status.query(),
+      //   app.objection.models.label.query(),
+      // ]);
+      // const notFullTasks = await app.objection.models.task
+      //   .query()
+      //   .joinRelated('[creator, executor, status]')
+      //   .select(
+        // 'tasks.*',
+        // raw("\"creator.firstName\" || ' ' || \"creator.lastName\" as creator"),
+        // 'creator.firstName as creator_firstName',
+        // 'creator.lastName as creator_lastName',
+        // raw("\"executor.firstName\" || ' ' || \"executor.lastName\" as executor"),
+        // 'executor.firstName as executor_firstName',
+        // 'executor.lastName as executor_lastName',
+        // 'status.name as status',
+        // );
+      // const tasks = notFullTasks.map((task) => {
+      //   const creator = `${task.creatorFirstName} ${task.creatorLastName}`;
+      //   const executor = `${task.executorFirstName} ${task.executorLastName}`;
+      //   return { ...task, creator, executor };
+      // });
+
+      reply.render('tasks/index', {
+        tasks, statuses, executors, labels,
+      });
       return reply;
     })
     .get(

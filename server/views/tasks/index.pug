@@ -2,7 +2,18 @@ extends ../layouts/application.pug
 
 block content
   h1.mb-3= t('views.tasks.label')
-  a.btn.btn-dark(href=route('newTasks'))= t('views.tasks.create')
+  a.btn.btn-dark.mb-3(href=route('newTasks'))= t('views.tasks.create')
+  .card.shadow-sm
+    .card-body.p-4
+      +formFor()(action=route('tasks') method='get')
+        .row
+          +filterSelect('status', 'statusId', statuses)
+          +filterSelect('executor', 'executorId', executors)
+          +filterSelect('label', 'label', labels)
+          .form-check.mb-3
+            input.form-check-input(id="data_isCreatorUser" type="checkbox" name="isCreatorUser")
+            label.form-check-label(for="data_isCreatorUser")= t('views.filters.onlyMy')
+          +submit()(value=t('views.filters.show'))
   table.table.table-striped
     thead
       tr
@@ -20,9 +31,9 @@ block content
           td
             //- a(href=route('taskInfo', { id: task.id}))= task.name
             a(href=`/tasks/${task.id}`)= task.name
-          td= task.status
-          td= task.creator
-          td= task.executor
+          td= task.status.name
+          td= task.creator.fullName()
+          td= task.executor.fullName()
           td= formatDate(task.createdAt)
           td
             .d-flex.flex-wrap

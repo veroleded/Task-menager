@@ -59,6 +59,16 @@ mixin select(entity, propertyName, errors = {}, items, multiple = false, selecte
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
+mixin filterSelect(localName, propertyName, items)
+  - selectId = getInputId(propertyName)
+  .col-12.col-md
+    .input-group.mb-3
+      label.input-group-text(for=selectId)= t(`views.filters.${localName}`)
+      select.form-select(id= inputId, name=propertyName)
+        option
+        each item in items
+          option(value=item.id)= item.name
+
 mixin submit(form = null)
   input(class='btn btn-primary' type='submit')&attributes(attributes)
   

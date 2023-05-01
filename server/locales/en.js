@@ -84,6 +84,13 @@ export default {
       },
     },
     views: {
+      filters: {
+        status: 'Status',
+        executor: 'Executor',
+        label: 'Labels',
+        onlyMy: 'Only my task',
+        show: 'Show',
+      },
       session: {
         new: {
           signIn: 'Login',
