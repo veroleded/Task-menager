@@ -1,3 +1,5 @@
+// @ts-check
+
 import fastify from 'fastify';
 import init from '../server/plugin.js';
 import { getTestData, prepareData } from './helpers/index.js';

@@ -27,34 +27,10 @@ export const test = {
 };
 
 export const production = {
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
+  client: 'sqlite3',
+  connection: {
+    filename: path.resolve(__dirname, 'database.sqlite'),
+  },
   useNullAsDefault: true,
   migrations,
 };
-
-// module.exports = {
-//   development: {
-//     client: 'sqlite3',
-//     useNullAsDefault: true,
-//     connection: {
-//       filename: './example.db',
-//     },
-//     pool: {
-//       afterCreate: (conn, cb) => {
-//         conn.run('PRAGMA foreign_keys = ON', cb);
-//       },
-//     },
-//   },
-
-//   production: {
-//     client: 'postgresql',
-//     connection: {
-//       database: 'example',
-//     },
-//     pool: {
-//       min: 2,
-//       max: 10,
-//     },
-//   },
-// };

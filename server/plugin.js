@@ -1,4 +1,5 @@
-import * as dotenv from 'dotenv';
+// @ts-check
+
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
@@ -26,7 +27,7 @@ import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
-dotenv.config();
+
 const mode = process.env.NODE_ENV || 'development';
 // const isDevelopment = mode === 'development';
 
@@ -111,21 +112,6 @@ const registerPlugins = async (app) => {
   await app.register(fastifyObjectionjs, {
     knexConfig: knexConfig[mode],
     models,
-  });
-
-  app.decorate('checkIfUserCanEditProfile', async (request, reply) => {
-    if (request.user?.id !== parseInt(request.params.id, 10)) {
-      request.flash('error', i18next.t('flash.users.authError'));
-      reply.redirect('/users');
-    }
-  });
-
-  app.decorate('checkIfUserCreatedTask', async (request, reply) => {
-    const { creatorId } = await app.objection.models.task.query().findById(request.params.id);
-    if (request.user?.id !== creatorId) {
-      request.flash('error', i18next.t('flash.tasks.authError'));
-      reply.redirect('/tasks');
-    }
   });
 };
 

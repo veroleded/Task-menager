@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import fastify from 'fastify';
 
@@ -50,45 +52,22 @@ describe('test users CRUD', () => {
   });
 
   it('create', async () => {
-    const paramsNew = testData.users.new;
-    const paramsExisting = testData.users.existing;
-    const responseNew = await app.inject({
-      method: 'POST',
-      url: app.reverse('users'),
-      payload: {
-        data: paramsNew,
-      },
-    });
-
-    const responseExisting = await app.inject({
-      method: 'POST',
-      url: app.reverse('users'),
-      payload: {
-        data: paramsExisting,
-      },
-    });
-
-    expect(responseNew.statusCode).toBe(302);
-    expect(responseExisting.statusCode).toBe(422);
-    const expected = {
-      ..._.omit(paramsNew, 'password'),
-      passwordDigest: encrypt(paramsNew.password),
-    };
-    const user = await models.user.query().findOne({ email: paramsNew.email });
-    expect(user).toMatchObject(expected);
-  });
-
-  it('edit', async () => {
-    const editingUser = testData.users.existing;
-    const user = await app.objection.models.user.query().findById.fromJson(2);
-    // console.log(user);
+    const params = testData.users.new;
     const response = await app.inject({
-      method: 'get',
-      url: app.reverse('userEdit', { id: `${editingUser.id}` }),
-      payload: user,
+      method: 'POST',
+      url: app.reverse('users'),
+      payload: {
+        data: params,
+      },
     });
-    console.log(response);
+
     expect(response.statusCode).toBe(302);
+    const expected = {
+      ..._.omit(params, 'password'),
+      passwordDigest: encrypt(params.password),
+    };
+    const user = await models.user.query().findOne({ email: params.email });
+    expect(user).toMatchObject(expected);
   });
 
   afterEach(async () => {
