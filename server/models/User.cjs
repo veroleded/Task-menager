@@ -48,9 +48,12 @@ module.exports = class User extends unique(BaseModel) {
   }
 
   static async beforeDelete({ asFindQuery }) {
-    const users = await Task.query().where('userId', asFindQuery().id);
-    if (users.length > 0) {
-      throw new Error('Cannot delete user because they have tasks');
+    const deletedUser = await asFindQuery().select('id');
+    const deletedUserID = deletedUser[0].id;
+    const hasCreateTask = await User.relatedQuery('createdTasks').for(deletedUserID);
+    const hasExecuteTask = await User.relatedQuery('executedTasks').for(deletedUserID);
+    if (hasCreateTask.length > 0 || hasExecuteTask.length > 0) {
+      throw new Error('Cannot delete user with task');
     }
   }
 

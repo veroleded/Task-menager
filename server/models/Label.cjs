@@ -37,12 +37,12 @@ module.exports = class Label extends unique(BaseModel) {
     };
   }
 
-  static async beforeDelete() {
-    const hasTask = await Task.query()
-      .join('tasks_labels', 'task.id', '=', 'taskLabels.taskId')
-      .where('tasks_labels.labelId', this.id)
-      .first();
-    if (hasTask) {
+  static async beforeDelete({ asFindQuery }) {
+    const deletedLabel = await asFindQuery().select('id');
+    const deletedLabelId = deletedLabel[0].id;
+    const hasTask = await this.relatedQuery('labelsTasks').for(deletedLabelId);
+    console.log(hasTask);
+    if (hasTask.length > 0) {
       throw new Error('Cannot delete label with task');
     }
   }

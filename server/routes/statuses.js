@@ -69,6 +69,7 @@ export default (app) => {
         req.flash('info', i18next.t('flash.statuses.delete.success'));
         reply.redirect(app.reverse('statuses'));
       } catch (err) {
+        console.log(err);
         req.flash('error', i18next.t('flash.statuses.delete.error'));
         reply.redirect(`/statuses/${id}/edit`);
       }

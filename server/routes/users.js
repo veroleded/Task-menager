@@ -79,6 +79,7 @@ export default (app) => {
           req.logout();
           reply.redirect(app.reverse('users'));
         } catch (err) {
+          console.log(err);
           req.flash('error', i18next.t('flash.users.delete.error'));
           reply.redirect(`/users/${id}/edit`);
         }

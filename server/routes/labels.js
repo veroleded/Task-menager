@@ -70,6 +70,7 @@ export default (app) => {
         req.flash('info', i18next.t('flash.label.delete.success'));
         reply.redirect(app.reverse('labels'));
       } catch (err) {
+        console.log(err);
         req.flash('error', i18next.t('flash.label.delete.error'));
         reply.redirect(`/labels/${id}/edit`);
       }

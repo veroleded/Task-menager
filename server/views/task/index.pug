@@ -23,4 +23,4 @@ block content
           td= task.executor
           td= formatDate(task.createdAt)
           td
-            a.btn.btn-primary(href=`#`)= t('views.task.edit.editTask')
+            a.btn.btn-primary(href=`tasks/${task.id}/edit`)= t('views.task.edit.editTask')
