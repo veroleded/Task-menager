@@ -14,6 +14,7 @@ export const development = {
   connection: {
     filename: path.resolve(__dirname, 'database.sqlite'),
   },
+  // debug: true,
   useNullAsDefault: true,
   migrations,
 };
@@ -31,6 +32,7 @@ export const production = {
   connection: {
     filename: path.resolve(__dirname, 'database.sqlite'),
   },
+  // debug: true,
   useNullAsDefault: true,
   migrations,
 };

@@ -1,0 +1,11 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.statuses.edit.editStatus')
+
+block content
+  +formFor()(action=`/statuses/${status.id}`, method="post")
+    +input(status, 'name', errors)(type="text")
+    input(name="_method" type="hidden" value='patch')
+    +submit(status)(value=t('views.statuses.edit.submit'))
+  +buttonTo(`/statuses/${status.id}`, 'delete')(value=t('views.statuses.edit.delete'), class="btn btn-danger mt-2")
