@@ -113,6 +113,9 @@ export default {
         creator: 'Автор',
         executor: 'Исполнитель',
         status: 'Статус',
+        labels: 'Метки',
+        onlyMy: 'Только мои задачи',
+        show: 'Показать',
         new: {
           add: 'Новая задача',
           sabmit: 'Сохранить',

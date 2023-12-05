@@ -76,9 +76,5 @@ module.exports = class Task extends BaseModel {
     filterStatus(query, id) {
       query.where('statusId', id);
     },
-
-    filterLabel(query, id) {
-      query.where('labels.id', id);
-    },
   };
 };

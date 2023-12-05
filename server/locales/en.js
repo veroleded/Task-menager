@@ -112,7 +112,10 @@ export default {
         createdAt: 'Created at',
         creator: 'Author',
         executor: 'Executor',
+        labels: 'Labels',
         status: 'Status',
+        onlyMy: 'Only my tasks',
+        show: 'Show',
         new: {
           add: 'New task',
           sibmit: 'Save',
@@ -161,7 +164,7 @@ export default {
       usersList: 'User List',
       statusesList: 'Status List',
       labelList: 'Label list',
-      taskList: 'Task ist',
+      taskList: 'Task list',
     },
   },
 };

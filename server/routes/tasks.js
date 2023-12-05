@@ -1,30 +1,59 @@
 // @ts-check
 
 import i18next from 'i18next';
-// import { raw } from 'objection';
+import { raw } from 'objection';
 import Task from '../models/Task.cjs';
 
 export default (app) => {
   app
-    .get('/tasks', { name: 'tasks' }, async (req, reply) => {
-      const tasksModels = await app.objection.models.task
+    .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
+      const { query } = req;
+
+      const tasksQuery = app.objection.models.task
         .query()
-        .withGraphJoined('[creator, executor, status]');
-      const tasks = await Promise.all(
-        tasksModels.map(async (task) => {
+        .withGraphJoined('[creator, executor, status, tasksLabels]');
+
+      if (query.executor && query.executor !== '') {
+        tasksQuery.modify('filterExecutor', Number(query.executor));
+      }
+
+      if (query.status && query.status !== '') {
+        tasksQuery.modify('filterStatus', Number(query.status));
+      }
+
+      if (query.isCreatorUser) {
+        tasksQuery.modify('filterCreator', req.user.id);
+      }
+
+      const [tasksNotNorm, executors, statuses, labels] = await Promise.all([
+        tasksQuery,
+        await app.objection.models.user
+          .query()
+          .select(raw('id, "first_name" || \' \' || "last_name" as name')),
+        await app.objection.models.statuses.query(),
+        await app.objection.models.label.query(),
+      ]);
+      const noFilterTasks = await Promise.all(
+        tasksNotNorm.map(async (task) => {
           const creator = `${task.creator.firstName} ${task.creator.lastName}`;
-          const executor = `${task.executor?.firstName ?? '??'} ${task.executor?.lastName ?? '??'}`;
+          const executor = `${task.executor.firstName} ${task.executor.lastName}`;
           const status = task.status.name;
+          const label = task.tasksLabels;
           return {
             ...task,
             creator,
             executor,
             status,
+            label,
           };
         }),
       );
-
-      reply.render('task/index', { tasks });
+      let tasks = noFilterTasks;
+      if (query.label && query.label !== '') {
+        tasks = noFilterTasks
+          .filter(({ tasksLabels }) => tasksLabels.some((tl) => tl.id === Number(query.label)));
+      }
+      reply.render('task/index', { tasks, executors, statuses, labels });
 
       return reply;
     })
@@ -65,7 +94,6 @@ export default (app) => {
         const validTask = await app.objection.models.task.fromJson(taskValues);
         // await transaction(Task, async (Task) => {
         const task = await Task.query().insertAndFetch(validTask);
-        console.log(task);
         labelsIds.forEach(async (id) => {
           await task.$relatedQuery('tasksLabels').relate(id);
           // });
@@ -130,20 +158,19 @@ export default (app) => {
         description,
         statusId: +statusId === 0 ? undefined : +statusId,
         executorId: +executorId === 0 ? undefined : +executorId,
-        creatorId: task.id,
+        creatorId: task.creatorId,
       });
 
       try {
         const validTask = await app.objection.models.task.fromJson(taskValues);
         // await transaction(Task, async (Task) => {
         await task.$query().updateAndFetch(validTask);
-        await task.$relatedQuery('tasksLabels').unrelate();
-        console.log(task);
+        await task.$relatedQuery('tasksLabels').unrelate().where('taskId', '=', task.id);
         labelsIds.forEach(async (labelId) => {
           await task.$relatedQuery('tasksLabels').relate(labelId);
           // });
         });
-
+        console.log(task);
         req.flash('info', i18next.t('flash.task.edit.success'));
         reply.redirect(app.reverse('tasks'));
         return reply;
@@ -158,7 +185,7 @@ export default (app) => {
 
         req.flash('error', i18next.t('flash.task.edit.error'));
         reply.render('task/edit', {
-          task: taskValues,
+          task: { ...taskValues, id },
           users,
           labels: labelList,
           statuses,
@@ -173,8 +200,7 @@ export default (app) => {
       const id = +req.params.id;
       try {
         const task = await app.objection.models.task.query().findById(id);
-        console.log(task);
-        await task.$relatedQuery('tasksLabels').unrelate();
+        await task.$relatedQuery('tasksLabels').unrelate().where('taskId', '=', task.id);
         await task.$query().delete();
         req.flash('info', i18next.t('flash.task.delete.success'));
         reply.redirect(app.reverse('tasks'));
